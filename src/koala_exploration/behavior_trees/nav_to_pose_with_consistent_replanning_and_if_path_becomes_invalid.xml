@@ -1,0 +1,65 @@
+<!--
+  To drzewo zachowań sprawdza czy obliczona ścieżka jest możliwa do przejścia
+  i wykonuje odpowiednie akcje naprawcze w przypadku nieważnej ścieżki.
+  Wykorzystuje węzeł IsPathValid do walidacji ścieżki.
+-->
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <RecoveryNode number_of_retries="2" name="NavigateWithPathValidation">
+      <PipelineSequence name="NavigateWithPathChecking">
+        <!-- Oblicz ścieżkę do celu z kontrolerem aktualizacji -->
+        <GoalUpdatedController>
+          <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+        </GoalUpdatedController>
+        
+        <!-- Sprawdź czy obliczona ścieżka jest prawidłowa -->
+        <ReactiveFallback name="PathValidationCheck">
+          <!-- Jeśli ścieżka jest prawidłowa, kontynuuj nawigację -->
+          <Sequence name="ValidPathSequence">
+            <IsPathValid path="{path}"/>
+            <FollowPath path="{path}" controller_id="FollowPath"/>
+          </Sequence>
+          
+          <!-- Jeśli ścieżka nie jest prawidłowa, wykonaj akcje naprawcze -->
+          <Sequence name="InvalidPathRecovery">
+            <!-- Wyczyść mapy kosztów -->
+            <ClearEntireCostmap name="ClearGlobalCostmap" service_name="global_costmap/clear_entirely_global_costmap"/>
+            <ClearEntireCostmap name="ClearLocalCostmap" service_name="local_costmap/clear_entirely_local_costmap"/>
+            
+            <!-- Spróbuj ponownie obliczyć ścieżkę 
+            <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/> -->
+            
+            <!-- Sprawdź ponownie ścieżkę -->
+            <IsPathValid path="{path}"/>
+            
+            <!-- Jeśli nadal prawidłowa, wykonaj nawigację -->
+            <FollowPath path="{path}" controller_id="FollowPath"/>
+          </Sequence>
+        </ReactiveFallback>
+      </PipelineSequence>
+      
+      <!-- Akcje naprawcze w przypadku niepowodzenia całego procesu -->
+      <ReactiveFallback name="FinalRecoveryActions">
+        <GoalUpdated/>
+        <RoundRobin name="RecoverySequence">
+          <!-- Podstawowe akcje naprawcze -->
+          <Sequence name="BasicRecoveryActions">
+            <Spin spin_dist="1.57"/>
+            <BackUp backup_dist="0.1" backup_speed="0.05"/>
+            <ClearEntireCostmap name="ClearAll-Global" service_name="global_costmap/clear_entirely_global_costmap"/>
+            <ClearEntireCostmap name="ClearAll-Local" service_name="local_costmap/clear_entirely_local_costmap"/>
+          </Sequence>
+          
+          <!-- Poczekaj na zmianę warunków -->
+          <Wait wait_duration="3"/>
+          
+          <!-- Dodatkowe manewry odblokujące -->
+          <Sequence name="AdditionalManeuvers">
+            <Spin spin_dist="3.14"/>
+            <BackUp backup_dist="0.2" backup_speed="0.03"/>
+          </Sequence>
+        </RoundRobin>
+      </ReactiveFallback>
+    </RecoveryNode>
+  </BehaviorTree>
+</root>

@@ -1,0 +1,7 @@
+map_file_path: "/home/jakub/dev_magisterka/src/koala_navigation/maps/Symulacja/map.pgm"
+scan_topic: "/scan"
+map_resolution: 0.05
+lidar_max_range: 12.0
+max_iterations: 150
+stop_search_threshold_f1: 100
+threshold_distance: 0.05

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="colors_koala">
+    
+    <!-- Definicje kolorów -->
+    <xacro:macro name="material_color" params="name r g b a">
+        <material name="${name}">
+            <color rgba="${r} ${g} ${b} ${a}"/>
+        </material>
+    </xacro:macro>
+
+    <!-- Podstawowe kolory -->
+    <xacro:material_color name="Red" r="1.0" g="0.0" b="0.0" a="1.0"/>
+    <xacro:material_color name="Green" r="0.0" g="1.0" b="0.0" a="1.0"/>
+    <xacro:material_color name="Blue" r="0.0" g="0.0" b="1.0" a="1.0"/>
+    <xacro:material_color name="Yellow" r="1.0" g="1.0" b="0.0" a="1.0"/>
+    <xacro:material_color name="Cyan" r="0.0" g="1.0" b="1.0" a="1.0"/>
+    <xacro:material_color name="Magenta" r="1.0" g="0.0" b="1.0" a="1.0"/>
+    <xacro:material_color name="White" r="1.0" g="1.0" b="1.0" a="1.0"/>
+    <xacro:material_color name="Black" r="0.0" g="0.0" b="0.0" a="1.0"/>
+    <xacro:material_color name="Gray" r="0.5" g="0.5" b="0.5" a="1.0"/>
+    <xacro:material_color name="Orange" r="1.0" g="0.5" b="0.0" a="1.0"/>
+
+</robot>

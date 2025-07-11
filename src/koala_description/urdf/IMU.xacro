@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<robot name="koala_IMU" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<!-- The macro camera is defined here -->
+    <xacro:macro name="IMU" params="parent x_pos y_pos z_pos ">
+        <link name="IMU_link"></link>
+        <!-- Joint properties -->
+        <joint name="IMU_joint" type="fixed">
+            <parent link="${parent}"/>
+            <child link="IMU_link"/>
+            <origin xyz="${x_pos} ${y_pos} ${z_pos}" rpy="0 0 0"/>
+        </joint>
+        
+        <!-- IMU properties -->
+        <gazebo reference="IMU_link">
+            <sensor name="koala_IMU" type="imu">
+                <always_on>true</always_on>
+                <update_rate>100</update_rate>
+                <imu>
+                    <angular_velocity>
+                        <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                        </noise>
+                        </x>
+                        <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                        </noise>
+                        </y>
+                        <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                        </noise>
+                        </z>
+                    </angular_velocity>
+                    <linear_acceleration>
+                        <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                        </noise>
+                        </x>
+                        <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                        </noise>
+                        </y>
+                        <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                        </noise>
+                        </z>
+                    </linear_acceleration>
+                    </imu>
+                <plugin name="IMU_plugin" filename="libgazebo_ros_imu_sensor.so">
+                    <ros>
+                        <namespace>imu</namespace>
+                        <remapping>~/out:=data</remapping>
+                    </ros>
+                    <initial_orientation_as_reference>false</initial_orientation_as_reference>
+                </plugin>
+            </sensor>
+            <!-- Material properties-->
+            <material>Gazebo/black</material>
+        </gazebo>
+    </xacro:macro>
+</robot>
