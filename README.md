@@ -1,0 +1,2 @@
+# Algorytm_autonomicznego_mapowania_nawigacji
+Repozytorium zawiera cały projekt oprogramowania pozwalający na autonomiczne mapowanie oraz nawigację.
