@@ -47,7 +47,26 @@ rosdep update       # aktualizuje bazę zależności
    mkdir -p ~/ros2_ws/src
    cd ~/ros2_ws
    ```
+
 2. Sklonuj repozytorium pakietu do katalogu `src`:
+
+   ```bash
+   cd src
+   git clone https://github.com/PanNiewidomy/Algorytm_autonomicznego_mapowania_nawigacji.git
+   ```
+
+3. **(Opcjonalnie)** Dodaj dodatkowy świat symulacyjny ROS 2 od AWS RoboMaker:
+
+   ```bash
+   cd src
+   git clone --branch ros2 https://github.com/aws-robotics/aws-robomaker-small-house-world.git
+   ```
+
+4. Wróć do katalogu głównego workspace:
+
+   ```bash
+   cd ~/ros2_ws
+   ```
 
    ```bash
    cd src
