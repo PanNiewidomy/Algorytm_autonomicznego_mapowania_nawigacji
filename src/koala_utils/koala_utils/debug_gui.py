@@ -376,7 +376,7 @@ class MainWindow(QMainWindow):
         gui = str(self.gui_box.isChecked()).lower()
         rviz = str(self.rviz_box.isChecked()).lower()
         cmd = ['ros2','launch', launch_path,
-               f'gui_run:={gui}', f'rviz_run:={rviz}']
+               f'gui:={gui}', f'rviz_run:={rviz}']
         p = subprocess.Popen(cmd, preexec_fn=os.setsid)
         self.child_procs_sim.append(p)
 
@@ -404,13 +404,13 @@ class MainWindow(QMainWindow):
             self.stop_nodes(self.child_procs_expl, "Exploration")
         try:
             pkg = get_package_share_directory('koala_exploration')
-            launch_path = os.path.join(pkg, 'launch', 'exploration_launch.py')
+            launch_path = os.path.join(pkg, 'launch', 'exploration_node_launch.py')
             if self.expl_rviz_box.isChecked():
                 print(self.expl_rviz_file)
                 p=subprocess.Popen(['ros2','run','rviz2','rviz2', '-d', self.expl_rviz_file], preexec_fn=os.setsid)
                 self.child_procs_expl.append(p)
         except:
-            launch_path = 'exploration_launch.py'
+            launch_path = 'exploration_node_launch.py'
         sim = str(self.use_sim_cb.isChecked()).lower()
         params = self.expl_params_file
         cmd = ['ros2','launch', launch_path,

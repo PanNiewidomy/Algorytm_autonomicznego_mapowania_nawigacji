@@ -1248,9 +1248,9 @@ class FrontierExplorer(Node):
                 
                 # Dodaj poprzedni cel do blacklisty po udanej nawigacji
                 if self._current_target:
-                    self.get_logger().info(f"🚫 Blacklistuję osiągnięty cel: {self._current_target}")
+                    self.get_logger().info(f"Blacklistuję osiągnięty cel: {self._current_target}")
                     self._blacklist_neighbors(self._current_target, radius_m=self.BLACKLIST_RADIUS)
-                    self.get_logger().info(f"🚫 Rozmiar blacklisty po dodaniu: {len(self._frontier_blacklist)}")
+                    self.get_logger().info(f"Rozmiar blacklisty po dodaniu: {len(self._frontier_blacklist)}")
                 
                 # Dodaj aktualną pozycję do listy odwiedzonych miejsc
                 current_pos = self._get_robot_pose()
@@ -1451,7 +1451,7 @@ class FrontierExplorer(Node):
             ordered_clusters.append(closest_cluster[0])  # centroid
             current_pos = closest_cluster[1]  # world position
         
-        self.get_logger().info(f"📋 Zoptymalizowano kolejność {len(ordered_clusters)} klastrów")
+        self.get_logger().info(f"Zoptymalizowano kolejność {len(ordered_clusters)} klastrów")
         return ordered_clusters
 
     def _get_exploration_zone(self, robot_pos: Tuple[float, float], radius: float = 4.0) -> List[Tuple[int,int]]:
@@ -1530,7 +1530,7 @@ class FrontierExplorer(Node):
                         if frontier not in self._frontier_blacklist:
                             score = self._calculate_frontier_score(frontier)
                             if score > self.SCORE_THRESHOLD * 0.7:  # Niższy próg dla lokalnych
-                                self.get_logger().info(f"🎯 Wybrano lokalny frontier: {frontier}")
+                                self.get_logger().info(f"Wybrano lokalny frontier: {frontier}")
                                 return frontier, score
             
             # Optymalizacja trasy TYLKO RAZ, na początku
@@ -1542,7 +1542,7 @@ class FrontierExplorer(Node):
                     first_optimal = optimal_order[0]
                     first_score = self._calculate_frontier_score(first_optimal)
                     if first_score > self.SCORE_THRESHOLD * 0.8:  # 80% progu
-                        self.get_logger().info(f"🎯 Wybieram pierwszy z optymalnej kolejności: {first_optimal}")
+                        self.get_logger().info(f"Wybieram pierwszy z optymalnej kolejności: {first_optimal}")
                         return first_optimal, first_score
             
             # Dynamiczne progi odległości
@@ -1582,7 +1582,7 @@ class FrontierExplorer(Node):
                     prev_x, prev_y = self._cell_to_world(self._previous_target, ox, oy, res)
                     distance_to_previous = math.sqrt((cx - prev_x)**2 + (cy - prev_y)**2)
                     if distance_to_previous < min_distance_to_previous:
-                        self.get_logger().info(f"🚫 Klaster {centroid_cell} za blisko poprzedniego celu {self._previous_target} ({distance_to_previous:.2f}m < {min_distance_to_previous}m) - pomijam")
+                        self.get_logger().info(f"Klaster {centroid_cell} za blisko poprzedniego celu {self._previous_target} ({distance_to_previous:.2f}m < {min_distance_to_previous}m) - pomijam")
                         continue
                 
                 # Sprawdź odległość od odwiedzonych pozycji
@@ -1591,7 +1591,7 @@ class FrontierExplorer(Node):
                     for visited_pos in self._visited_positions:
                         distance_to_visited = math.sqrt((cx - visited_pos[0])**2 + (cy - visited_pos[1])**2)
                         if distance_to_visited < min_distance_to_visited:
-                            self.get_logger().info(f"🚫 Klaster {centroid_cell} za blisko odwiedzonej pozycji ({distance_to_visited:.1f}m)")
+                            self.get_logger().info(f"Klaster {centroid_cell} za blisko odwiedzonej pozycji ({distance_to_visited:.1f}m)")
                             too_close_to_visited = True
                             break
                 
@@ -1643,7 +1643,7 @@ class FrontierExplorer(Node):
                 
             # CASE 1: Active navigation target exists
             if self._current_target is not None:
-                self.get_logger().info(f"🧭🚀 _explore() START [{current_time:.1f}] - cel: {self._current_target}")
+                self.get_logger().info(f"_explore() START [{current_time:.1f}] - cel: {self._current_target}")
                 
                 # Validate if current target still exists in frontier database
                 _, clusters, _, is_fresh = self._get_cached_frontiers()
@@ -1652,7 +1652,7 @@ class FrontierExplorer(Node):
                     return
                     
                 if self._current_target and not self._is_target_cell_valid(self._current_target, clusters):
-                    self.get_logger().info(f"🧭🚀 Cel {self._current_target} nie istnieje w bazie danych, wybieram nowy")
+                    self.get_logger().info(f"Cel {self._current_target} nie istnieje w bazie danych, wybieram nowy")
                     self._current_target = None
                     self._current_target_score = -math.inf
                     self._start_next_navigation()
@@ -1662,7 +1662,7 @@ class FrontierExplorer(Node):
                 nav_complete = self.nav.isTaskComplete()
                 if nav_complete:
                     result = self.nav.getResult()
-                    self.get_logger().info(f"🧭🚀 Nawigacja zakończona: {result}")
+                    self.get_logger().info(f"Nawigacja zakończona: {result}")
                     self._handle_navigation_result(result)
                     return
                 
@@ -1672,7 +1672,7 @@ class FrontierExplorer(Node):
                     self._last_continuous_eval = current_time
                     
                     if self.DEBUG_LOGGING:
-                        self.get_logger().info(f"🔎 Evaluating current navigation [{current_time:.1f}]")
+                        self.get_logger().info(f"Evaluating current navigation [{current_time:.1f}]")
                     
                     # Pre-calculate scores for all clusters
                     for cluster in clusters:
@@ -1681,13 +1681,13 @@ class FrontierExplorer(Node):
                     
                     # Check if current target is still valid
                     if not self._is_target_still_valid(clusters):
-                        self.get_logger().info(f"ℹ️ Aktualny cel {self._current_target} nie jest już aktualny")
+                        self.get_logger().info(f"ℹAktualny cel {self._current_target} nie jest już aktualny")
                         
                         # Calculate new best frontier
                         new_best_cell, new_best_score = self._find_best_frontier()
                         if new_best_cell is not None and new_best_cell != self._current_target:
                             self.get_logger().info(
-                                f"🔄 Zmieniam cel: {self._current_target} → {new_best_cell} "
+                                f"Zmieniam cel: {self._current_target} → {new_best_cell} "
                                 f"(score: {self._current_target_score:.2f} → {new_best_score:.2f})"
                             )
                             # Reset state before sending new goal
@@ -1714,17 +1714,17 @@ class FrontierExplorer(Node):
                         if self._current_target and best_cell:
                             if abs(best_cell[0] - self._current_target[0]) <= 1 and abs(best_cell[1] - self._current_target[1]) <= 1:
                                 if self.DEBUG_LOGGING:
-                                    self.get_logger().info("ℹ️ Nowy frontier w pobliżu aktualnego celu - kontynuuję")
+                                    self.get_logger().info("Nowy frontier w pobliżu aktualnego celu - kontynuuję")
                                 return
                         
                         # Handle different frontier comparison cases
                         if best_cell == self._current_target:
                             if self.DEBUG_LOGGING:
-                                self.get_logger().info("ℹ️ Aktualny cel nadal najlepszy")
+                                self.get_logger().info("Aktualny cel nadal najlepszy")
                             return
                         elif best_cell is None:
                             if self.DEBUG_LOGGING:
-                                self.get_logger().info("ℹ️ Brak nowych frontierów - kontynuuję")
+                                self.get_logger().info("Brak nowych frontierów - kontynuuję")
                             return
                         else:
                             # Check if new goal is significantly better
@@ -1732,7 +1732,7 @@ class FrontierExplorer(Node):
                             
                             if improvement > self.MIN_SCORE_IMPROVEMENT:
                                 self.get_logger().info(
-                                    f"🚀 Lepszy frontier: {self._current_target}→{best_cell} "
+                                    f"Lepszy frontier: {self._current_target}→{best_cell} "
                                     f"(score: {self._current_target_score:.2f}→{best_score:.2f}, +{improvement:.2f})"
                                 )
                                 
@@ -1742,24 +1742,24 @@ class FrontierExplorer(Node):
                                     self._send_goal(*goal, cell=best_cell, score=best_score)
                             else:
                                 if self.DEBUG_LOGGING:
-                                    self.get_logger().info(f"ℹ️ Niewystarczająca poprawa: +{improvement:.2f}")
+                                    self.get_logger().info(f" Niewystarczająca poprawa: +{improvement:.2f}")
                 
                 # Throttling check - don't attempt navigation too frequently
                 time_since_last_attempt = current_time - getattr(self, '_last_navigation_attempt', 0.0)
                 if time_since_last_attempt < 1.0:
                     if self.DEBUG_LOGGING:
-                        self.get_logger().info(f"🧭🚀 Throttling navigation ({time_since_last_attempt:.1f}s)")
+                        self.get_logger().info(f"Throttling navigation ({time_since_last_attempt:.1f}s)")
                     return
                 
             # CASE 2: No active target, start new navigation
             else:
-                self.get_logger().info("🧭🚀 Brak aktywnego celu, rozpoczynam nową nawigację")
+                self.get_logger().info("Brak aktywnego celu, rozpoczynam nową nawigację")
                 self._last_navigation_attempt = current_time
                 self.retry_attempt = True  # Reset retry attempt flag
                 self._start_next_navigation()
                 
         except Exception as e:
-            self.get_logger().error(f"❌ Błąd w _explore(): {e}")
+            self.get_logger().error(f"Błąd w _explore(): {e}")
             # Reset navigation state on error
             self._current_target = None
             self._current_target_score = -math.inf
@@ -1941,7 +1941,6 @@ class FrontierExplorer(Node):
                 result = self.nav.getResult()
                 time.sleep(0.2)  # Krótkie opóźnienie dla stabilności
                 self.get_logger().info(f"Wykryto zakończoną nawigację w _start_next_navigation: {result}")
-                self.get_logger().info("LINIA 3090 - obsługuje wynik nawigacji =======================================")
                 self._handle_navigation_result(result)
                 return
                 
@@ -2097,7 +2096,7 @@ class FrontierExplorer(Node):
                         self.get_logger().error(f"Błąd liczenia blackliście pozycji: {e}")
                 
                 self.get_logger().info(
-                    f"📊 Statystyki pozycji robota: przejechano {self._total_distance_traveled:.1f}m, "
+                    f"Statystyki pozycji robota: przejechano {self._total_distance_traveled:.1f}m, "
                     f"blacklistowano {robot_blacklist_count} pozycji"
                 )
             

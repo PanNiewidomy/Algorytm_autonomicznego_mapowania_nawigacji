@@ -220,7 +220,7 @@ class FFDExplorerNode(Node):
         self._init_margin_visualization()
         
         if self.debug_logging:
-            self.get_logger().info("🚀 FFD Explorer uruchomiony z równoległym przetwarzaniem")
+            self.get_logger().info("FFD Explorer uruchomiony z równoległym przetwarzaniem")
 
     def _initialize_data_structures(self):
         """Inicjalizuje struktury danych FFD."""
@@ -303,7 +303,7 @@ class FFDExplorerNode(Node):
             # Sprawdź czy poprzednie wykrywanie się zakończyło
             if self.detection_in_progress:
                 if self.debug_logging:
-                    self.get_logger().debug("🔄 Pomijam wykrywanie - poprzednie w toku")
+                    self.get_logger().debug("Pomijam wykrywanie - poprzednie w toku")
                 return
             
             self.detection_in_progress = True
@@ -331,12 +331,12 @@ class FFDExplorerNode(Node):
             with self._data_lock:
                 if not self._can_detect_frontiers():
                     if self.debug_logging:
-                        self.get_logger().warning("⚠️  FFD: Brak danych do wykrywania")
+                        self.get_logger().warning("FFD: Brak danych do wykrywania")
                     return
                 
                 # NOWE: Walidacja spójności danych
                 if not self._validate_frontier_consistency():
-                    self.get_logger().warning("⚠️  Wykryto niespójności w bazie frontierów - naprawiam...")
+                    self.get_logger().warning("Wykryto niespójności w bazie frontierów - naprawiam...")
                     self._repair_frontier_consistency()
                 
                 # Skopiuj dane potrzebne do przetwarzania
@@ -357,7 +357,7 @@ class FFDExplorerNode(Node):
             
             if not laser_pts:
                 if self.debug_logging:
-                    self.get_logger().warning("⚠️  FFD: Brak punktów laser")
+                    self.get_logger().warning("FFD: Brak punktów laser")
                 return
             
             robot_grid_pos = self._world_to_grid((last_pose[0], last_pose[1]))
@@ -518,7 +518,7 @@ class FFDExplorerNode(Node):
         all_frontier_points = self.db.get_all_frontier_points()[:]
         
         if self.debug_logging:
-            self.get_logger().info(f"🧹 _maintain_frontiers(): Sprawdzam {len(all_frontier_points)} punktów frontierów")
+            self.get_logger().info(f"_maintain_frontiers(): Sprawdzam {len(all_frontier_points)} punktów frontierów")
         
         # Zbierz punkty do usunięcia zamiast usuwać od razu
         points_to_remove = []
@@ -541,11 +541,11 @@ class FFDExplorerNode(Node):
         # Sprawdź spójność po usunięciu
         if frontiers_affected:
             if self.debug_logging:
-                self.get_logger().debug(f"🧹 Naprawiam spójność po usunięciu punktów z {len(frontiers_affected)} frontierów")
+                self.get_logger().debug(f"Naprawiam spójność po usunięciu punktów z {len(frontiers_affected)} frontierów")
             self._repair_frontier_consistency()
         
         if self.debug_logging:
-            self.get_logger().info(f"🧹 _maintain_frontiers(): Usunięto {points_removed} punktów z {len(frontiers_affected)} frontierów")
+            self.get_logger().info(f"_maintain_frontiers(): Usunięto {points_removed} punktów z {len(frontiers_affected)} frontierów")
 
     def _is_frontier_cell_strict(self, point: Tuple[int, int], occ_grid: np.ndarray) -> bool:
         """Bardziej rygorystyczna wersja sprawdzania frontierów."""
@@ -555,17 +555,13 @@ class FFDExplorerNode(Node):
         if not (0 <= x < occ_grid.shape[0] and 0 <= y < occ_grid.shape[1]):
             return False
 
-        # # 2. ZWIĘKSZONY próg licznika odwiedzin
-        # if self.visit_counter[x, y] > 10:  # Zwiększone z 3 do 5
-        #     return False
-
-        # 3. BARDZIEJ RESTRYKCYJNE kryteria dla mapy
+        # 2. BARDZIEJ RESTRYKCYJNE kryteria dla mapy
         cell_value = occ_grid[x, y]
         # Frontier musi być TYLKO nieznany (-1), nie akceptujemy już poznanych komórek
         if cell_value != -1:  # Tylko nieznane komórki mogą być frontierami
             return False
 
-        # 4. Sprawdzenie sąsiadów - WYMAGANE co najmniej 2 puste komórki obok
+        # 3. Sprawdzenie sąsiadów - WYMAGANE co najmniej 2 puste komórki obok
         free_neighbors = 0
         for dx, dy in [(-1, -1), (-1, 0), (-1, 1),
                     (0, -1),           (0, 1),
@@ -632,7 +628,7 @@ class FFDExplorerNode(Node):
                 merged_frontiers.add(target_fid)
         
         if self.debug_logging and merged_frontiers:
-            self.get_logger().debug(f"🔗 Scalono {len(merged_frontiers)} frontierów")
+            self.get_logger().debug(f"Scalono {len(merged_frontiers)} frontierów")
 
     def _safe_merge_frontiers(self, target_fid: int, source_fid: int):
         """
@@ -665,7 +661,7 @@ class FFDExplorerNode(Node):
         del self.db.frontiers[source_fid]
         
         if self.debug_logging:
-            self.get_logger().debug(f"🔗 Scalono frontier {source_fid} z {target_fid} ({len(points_to_move)} punktów)")
+            self.get_logger().debug(f"Scalono frontier {source_fid} z {target_fid} ({len(points_to_move)} punktów)")
 
     # =========================================================================
     # FUNKCJE POMOCNICZE
@@ -759,16 +755,16 @@ class FFDExplorerNode(Node):
             
             if loss_percentage > 10:  # Tylko jeśli straca > 10% obszaru
                 self.get_logger().warning(
-                    f"⚠️  Znaczące obcięcie aktywnego obszaru ({loss_percentage:.1f}% straty)! "
+                    f"Znaczące obcięcie aktywnego obszaru ({loss_percentage:.1f}% straty)! "
                     f"Oryginał: x[{x_min_with_margin}:{x_max_with_margin}], y[{y_min_with_margin}:{y_max_with_margin}] "
                     f"-> x[{x_min}:{x_max}], y[{y_min}:{y_max}]"
                 )
             elif loss_percentage > 0:
                 self.get_logger().debug(
-                    f"🔄 Niewielkie obcięcie aktywnego obszaru ({loss_percentage:.1f}% straty)"
+                    f"Niewielkie obcięcie aktywnego obszaru ({loss_percentage:.1f}% straty)"
                 )
             
-            self.get_logger().debug(f"🔄 Aktywny obszar: {len(self.active_area)} punktów (margin: {margin}, strata: {loss_percentage:.1f}%)")
+            self.get_logger().debug(f"Aktywny obszar: {len(self.active_area)} punktów (margin: {margin}, strata: {loss_percentage:.1f}%)")
 
     def _visualize_margin(self):
         """Wizualizuje aktywny obszar i margin co 20 sekund - WERSJA BEZ INTERAKTYWNOŚCI."""
@@ -874,19 +870,19 @@ class FFDExplorerNode(Node):
                 plt.savefig(filename, dpi=150, bbox_inches='tight')
                 
                 if self.debug_logging:
-                    self.get_logger().info(f"📊 Zapisano wizualizację do {filename}")
+                    self.get_logger().info(f"Zapisano wizualizację do {filename}")
             
             # 11. WAŻNE: Zamknij wykres żeby zwolnić pamięć
             plt.close(fig)
             
             if self.debug_logging:
                 self.get_logger().info(
-                    f"📊 Wizualizacja marginesu: {len(laser_pts)} punktów laser, "
+                    f"Wizualizacja marginesu: {len(laser_pts)} punktów laser, "
                     f"margin: {margin}, aktywny obszar: {len(active_area)} punktów"
                 )
                 
         except Exception as e:
-            self.get_logger().error(f"❌ Błąd wizualizacji marginesu: {e}")
+            self.get_logger().error(f"Błąd wizualizacji marginesu: {e}")
             import traceback
             self.get_logger().error(f"Traceback: {traceback.format_exc()}")
 
@@ -952,10 +948,10 @@ class FFDExplorerNode(Node):
             plt.close(fig)  # WAŻNE: Zamknij wykres
             
             if self.debug_logging:
-                self.get_logger().info(f"📊 Zapisano porównanie marginesów do {filename}")
+                self.get_logger().info(f"Zapisano porównanie marginesów do {filename}")
             
         except Exception as e:
-            self.get_logger().error(f"❌ Błąd porównania marginesów: {e}")
+            self.get_logger().error(f"Błąd porównania marginesów: {e}")
     def _update_visit_counters(self, contour: List[Tuple[int, int]]):
         """Aktualizuje liczniki odwiedzin dla punktów konturu."""
         for point in contour:
@@ -974,7 +970,7 @@ class FFDExplorerNode(Node):
         # 1. Sprawdź granice mapy
         if not (0 <= x < occ_grid.shape[0] and 0 <= y < occ_grid.shape[1]):
             if self.debug_logging:
-                self.get_logger().debug(f"🧹 Punkt {point} poza granicami mapy")
+                self.get_logger().debug(f"Punkt {point} poza granicami mapy")
             return False
 
         # 2. Sprawdź wartość komórki
@@ -983,7 +979,7 @@ class FFDExplorerNode(Node):
         # KLUCZOWA ZMIANA: Jeśli komórka jest już znana (nie -1), to nie jest frontierem
         if cell_value != -1:
             if self.debug_logging:
-                self.get_logger().debug(f"🧹 Punkt {point} już znany (wartość: {cell_value})")
+                self.get_logger().debug(f"Punkt {point} już znany (wartość: {cell_value})")
             return False
 
         # 3. Sprawdź czy ma sąsiada w otwartej przestrzeni
@@ -1001,7 +997,7 @@ class FFDExplorerNode(Node):
 
         if not has_free_neighbor:
             if self.debug_logging:
-                self.get_logger().debug(f"🧹 Punkt {point} nie ma pustych sąsiadów")
+                self.get_logger().debug(f"Punkt {point} nie ma pustych sąsiadów")
             return False
 
         return True
@@ -1059,7 +1055,7 @@ class FFDExplorerNode(Node):
         # DEBUGGING: Loguj problematyczne konwersje
         if self.debug_logging and (grid_col < 0 or grid_row < 0):
             self.get_logger().debug(
-                f"🌍➡️📍 Ujemne grid: world({x:.2f}, {y:.2f}) -> grid({grid_row}, {grid_col}) "
+                f"Ujemne grid: world({x:.2f}, {y:.2f}) -> grid({grid_row}, {grid_col}) "
                 f"[origin: ({self.map_origin[0]:.2f}, {self.map_origin[1]:.2f}), res: {self.map_resolution:.4f}]"
             )
         
@@ -1101,7 +1097,7 @@ class FFDExplorerNode(Node):
         # DEBUGGING: Loguj problematyczne punkty
         if self.debug_logging and (points_outside_map > 0 or points_negative_grid > 0):
             self.get_logger().debug(
-                f"🔍 Laser: {len(points)} punktów w mapie, {points_outside_map} poza mapą "
+                f"Laser: {len(points)} punktów w mapie, {points_outside_map} poza mapą "
                 f"({points_negative_grid} z ujemnymi grid), robot: ({robot_x:.2f}, {robot_y:.2f})"
             )
         
@@ -1131,7 +1127,7 @@ class FFDExplorerNode(Node):
         
         if self.debug_logging and (shape_changed or origin_changed):
             self.get_logger().info(
-                f"📏 Zmiana mapy: "
+                f"Zmiana mapy: "
                 f"shape: {old_shape} → {new_shape}, "
                 f"origin: {old_origin} → {new_origin}, "
                 f"resolution: {self.map_resolution:.4f}"
@@ -1140,13 +1136,13 @@ class FFDExplorerNode(Node):
             # OSTRZEŻENIE o ujemnych origins
             if new_origin[0] < 0 or new_origin[1] < 0:
                 self.get_logger().warning(
-                    f"⚠️  UWAGA: Ujemny origin mapy może powodować problemy z konwersją współrzędnych!"
+                    f"UWAGA: Ujemny origin mapy może powodować problemy z konwersją współrzędnych!"
                 )
         
         if shape_changed:
             if self.debug_logging:
                 self.get_logger().info(
-                    f"📏 Wykryto zmianę rozmiaru mapy: {old_shape} → {new_shape}"
+                    f"Wykryto zmianę rozmiaru mapy: {old_shape} → {new_shape}"
                 )
             
             # Aktualizuj rozmiar tylko jeśli rzeczywiście się zmienił
@@ -1206,7 +1202,7 @@ class FFDExplorerNode(Node):
             
             # Loguj wszystkie niespójności
             if inconsistencies and self.debug_logging:
-                self.get_logger().warning(f"⚠️  Znaleziono {len(inconsistencies)} niespójności:")
+                self.get_logger().warning(f"Znaleziono {len(inconsistencies)} niespójności:")
                 for i, issue in enumerate(inconsistencies[:5]):  # Pokaż tylko pierwsze 5
                     self.get_logger().warning(f"  {i+1}. {issue}")
                 if len(inconsistencies) > 5:
@@ -1216,13 +1212,13 @@ class FFDExplorerNode(Node):
             
         except Exception as e:
             if self.debug_logging:
-                self.get_logger().error(f"❌ Błąd walidacji spójności: {e}")
+                self.get_logger().error(f"Błąd walidacji spójności: {e}")
             return False
 
     def _repair_frontier_consistency(self):
         """Naprawia niespójności w bazie danych frontierów."""
         if self.debug_logging:
-            self.get_logger().info("🔧 Naprawiam niespójności w bazie frontierów...")
+            self.get_logger().info("Naprawiam niespójności w bazie frontierów...")
         
         # Wyczyść grid_idx
         self.db.grid_idx.fill(None)
@@ -1243,7 +1239,7 @@ class FFDExplorerNode(Node):
         self.db.frontiers = defaultdict(set, valid_frontiers)
         
         if self.debug_logging:
-            self.get_logger().info(f"🔧 Naprawiono bazę: {len(valid_frontiers)} granic")
+            self.get_logger().info(f"Naprawiono bazę: {len(valid_frontiers)} granic")
 
 
     def _resize_data_structures_if_needed(self):
@@ -1255,7 +1251,7 @@ class FFDExplorerNode(Node):
             
             if self.debug_logging:
                 self.get_logger().info(
-                    f"📏 Zmiana rozmiaru mapy z {self.db.grid_idx.shape} na {self.map_shape}"
+                    f"Zmiana rozmiaru mapy z {self.db.grid_idx.shape} na {self.map_shape}"
                     f" (frontiers przed: {old_frontier_count})"
                 )
             
@@ -1269,7 +1265,7 @@ class FFDExplorerNode(Node):
             
             if self.debug_logging:
                 self.get_logger().info(
-                    f"📏 Zmieniono rozmiar mapy: zachowano {new_frontier_count}/{old_frontier_count} "
+                    f"Zmieniono rozmiar mapy: zachowano {new_frontier_count}/{old_frontier_count} "
                     f"frontierów ({preserved_percentage:.1f}%)"
                 )
     def _safe_resize_frontier_db(self):
@@ -1315,7 +1311,7 @@ class FFDExplorerNode(Node):
         if self.debug_logging:
             preserved_frontiers = len([fid for fid, points in frontier_data if points])
             self.get_logger().debug(
-                f"🔄 Przeniesiono {preserved_frontiers} granic z {len(old_db.frontiers)} oryginalnych"
+                f"Przeniesiono {preserved_frontiers} granic z {len(old_db.frontiers)} oryginalnych"
             )
 
     def _safe_resize_visit_counter(self):
@@ -1333,7 +1329,7 @@ class FFDExplorerNode(Node):
             
             if self.debug_logging:
                 transferred_visits = np.sum(self.visit_counter[:min_rows, :min_cols])
-                self.get_logger().debug(f"🔄 Przeniesiono {transferred_visits} odwiedzin")
+                self.get_logger().debug(f"Przeniesiono {transferred_visits} odwiedzin")
 
     
     def _diagnose_frontiers(self, occ_grid: np.ndarray):
@@ -1348,7 +1344,7 @@ class FFDExplorerNode(Node):
             value = occ_grid[point]
             value_counts[value] += 1
         
-        self.get_logger().info("🔍 Analiza frontierów według wartości mapy:")
+        self.get_logger().info("Analiza frontierów według wartości mapy:")
         for value, count in sorted(value_counts.items()):
             self.get_logger().info(f"   Wartość {value}: {count} punktów")
 
@@ -1382,10 +1378,6 @@ class FFDExplorerNode(Node):
         try:
             # Sprawdź czy wykrywanie jest w toku
             with self._data_lock:
-                if self.detection_in_progress:
-                    # Opcjonalnie możesz dodać komunikat
-                    # self.get_logger().info("Publikacja odłożona - wykrywanie w toku")
-                    return
                 
                 # Pobierz dane TYLKO gdy wykrywanie jest zakończone
                 points = self.db.get_all_frontier_points()[:]
@@ -1394,11 +1386,10 @@ class FFDExplorerNode(Node):
                 cpu_time = self.cpu_time
                 cpu_usage = self.cpu_usage
                 
-            
-            # Klasteryzacja (bez locka) - NAPRAWIONA: Użyj K-means dla stabilności
+            # Klasteryzacja (bez locka) 
             try:
                 clusters = _clustering_frontiers_Kmeans(
-                    parent=self,  # NAPRAWIONE: Dodaj parametr parent
+                    parent=self,
                     debug_logging=False, 
                     frontiers=points, 
                     divisor=100,
@@ -1408,7 +1399,7 @@ class FFDExplorerNode(Node):
             except Exception as e:
                 # Fallback do DBScan jeśli K-means nie działa
                 if self.debug_logging:
-                    self.get_logger().warning(f"⚠️  K-means nie działa, używam DBScan: {e}")
+                    self.get_logger().warning(f"K-means nie działa, używam DBScan: {e}")
                 clusters = _clustering_frontiers_DBScan(
                     debug_logging=False, 
                     frontiers=points, 
@@ -1460,12 +1451,12 @@ class FFDExplorerNode(Node):
                 with self._data_lock:
                     active_area_size = len(self.active_area)
                 self.get_logger().info(
-                    f"📡 Opublikowano {len(points)} frontierów w {len(cluster_centroids)} klastrach "
+                    f"Opublikowano {len(points)} frontierów w {len(cluster_centroids)} klastrach "
                     f"(CPU: {cpu_time:.3f}s, Aktywny obszar: {active_area_size} punktów)"
                 )
                 
         except Exception as e:
-            self.get_logger().error(f"❌ Błąd publikacji: {e}")
+            self.get_logger().error(f"Błąd publikacji: {e}")
     
     def _diagnose_coordinate_issues(self, laser_pts: List[Tuple[int, int]], robot_pose: Tuple[float, float, float]):
         """
@@ -1482,7 +1473,7 @@ class FFDExplorerNode(Node):
         
         if negative_points or robot_grid[0] < 0 or robot_grid[1] < 0:
             self.get_logger().warning(
-                f"🚨 PROBLEM Z UJEMNYMI WSPÓŁRZĘDNYMI:"
+                f"PROBLEM Z UJEMNYMI WSPÓŁRZĘDNYMI:"
                 f"\n  Robot world: ({robot_x:.2f}, {robot_y:.2f})"
                 f"\n  Robot grid: ({robot_grid[0]}, {robot_grid[1]})"
                 f"\n  Map origin: ({self.map_origin[0]:.2f}, {self.map_origin[1]:.2f})"
@@ -1533,20 +1524,20 @@ class FFDExplorerNode(Node):
         try:
             with self._data_lock:
                 if not self._validate_frontier_consistency():
-                    self.get_logger().warning("⚠️  Wykryto niespójności podczas okresowego sprawdzania - naprawiam...")
+                    self.get_logger().warning("Wykryto niespójności podczas okresowego sprawdzania - naprawiam...")
                     self._repair_frontier_consistency()
                     
                     # Sprawdź ponownie
                     if self._validate_frontier_consistency():
-                        self.get_logger().info("✅ Spójność bazy danych przywrócona")
+                        self.get_logger().info("Spójność bazy danych przywrócona")
                     else:
-                        self.get_logger().error("❌ Nie udało się naprawić spójności bazy danych!")
+                        self.get_logger().error("Nie udało się naprawić spójności bazy danych!")
                 elif self.debug_logging:
                     frontier_count = len(self.db.get_all_frontier_points())
-                    self.get_logger().debug(f"✅ Spójność bazy OK ({frontier_count} frontierów)")
+                    self.get_logger().debug(f"pójność bazy OK ({frontier_count} frontierów)")
                     
         except Exception as e:
-            self.get_logger().error(f"❌ Błąd podczas okresowego sprawdzania spójności: {e}")
+            self.get_logger().error(f"Błąd podczas okresowego sprawdzania spójności: {e}")
 
 # =============================================================================
 # GŁÓWNA FUNKCJA
@@ -1563,7 +1554,7 @@ def main(args=None):
     try:
         executor.spin()
     except KeyboardInterrupt:
-        node.get_logger().info('🛑 Zatrzymano przez użytkownika')
+        node.get_logger().info('Zatrzymano przez użytkownika')
     finally:
         node.destroy_node()
         rclpy.shutdown()

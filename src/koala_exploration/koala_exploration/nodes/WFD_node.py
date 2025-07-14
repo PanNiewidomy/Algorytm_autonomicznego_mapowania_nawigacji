@@ -324,7 +324,7 @@ class WFDExplorerNode(Node):
         self.previous_map_size = None
         self.previous_map_hash = None
         self.last_detection_time = 0.0
-        self.detection_interval = 5.0  # 4 sekundy między wykrywaniami
+        self.detection_interval = 5.0  # 5 sekundy między wykrywaniami
         
         # Multiprocessing setup
         self.manager = mp.Manager()
@@ -347,7 +347,7 @@ class WFDExplorerNode(Node):
         self.publish_timer = self.create_timer(1.0, self.publish_frontiers)
         
         if self.debug_logging:
-            self.get_logger().info("🔍 WFD Explorer z zunifikowaną strukturą zainicjalizowany")
+            self.get_logger().info("WFD Explorer z zunifikowaną strukturą zainicjalizowany")
             
     def get_current_time(self) -> float:
         """Zwraca aktualny czas w sekundach od epoki."""
@@ -368,7 +368,7 @@ class WFDExplorerNode(Node):
     def map_callback(self, msg: OccupancyGrid) -> None:
         """Callback dla topicu mapy zajętości"""
         if self.debug_logging:
-            self.get_logger().info("�️  Otrzymano nową mapę...")
+            self.get_logger().info("Otrzymano nową mapę...")
             
         self.map = msg
         new_shape = (msg.info.height, msg.info.width)
@@ -391,7 +391,7 @@ class WFDExplorerNode(Node):
             self.map_origin = new_origin
             
             if self.debug_logging:
-                self.get_logger().info(f"📏 Zmieniono rozmiar mapy na {self.map_shape}")
+                self.get_logger().info(f"Zmieniono rozmiar mapy na {self.map_shape}")
         
         # Sprawdź czy procesy się zakończyły
         processes_finished = True
@@ -407,7 +407,7 @@ class WFDExplorerNode(Node):
             self.last_detection_time = current_time
             
             if self.debug_logging:
-                self.get_logger().info("🔍 WFD: Rozpoczynam wykrywanie frontierów...")
+                self.get_logger().info("WFD: Rozpoczynam wykrywanie frontierów...")
             self.cpu_time_start = self.get_current_time()
             self._start_frontier_detection(msg)
     
@@ -460,7 +460,7 @@ class WFDExplorerNode(Node):
                     
                     if self.debug_logging:
                         self.get_logger().info(
-                            f"🔍 Otrzymano {len(self.pending_frontiers)} frontierów, "
+                            f"Otrzymano {len(self.pending_frontiers)} frontierów, "
                             f"CPU: {cpu_usage:.2f}s, Memory: {memory_usage:.2f}MB"
                         )
                     
@@ -478,7 +478,7 @@ class WFDExplorerNode(Node):
                     
                     if self.debug_logging:
                         self.get_logger().info(
-                            f"🔍 Otrzymano {len(self.pending_clusters)} klastrów, "
+                            f"Otrzymano {len(self.pending_clusters)} klastrów, "
                             f"CPU: {cpu_percent:.1f}%, Memory: {memory_mb:.1f}MB"
                         )
                     
@@ -498,13 +498,13 @@ class WFDExplorerNode(Node):
                         
                 elif result['type'] == 'error':
                     if self.debug_logging:
-                        self.get_logger().error(f"❌ Błąd w procesie: {result['error']}")
+                        self.get_logger().error(f"Błąd w procesie: {result['error']}")
                         
             except queue.Empty:
                 continue
             except Exception as e:
                 if self.debug_logging:
-                    self.get_logger().error(f"❌ Błąd przetwarzania wyników: {e}")
+                    self.get_logger().error(f"Błąd przetwarzania wyników: {e}")
     
     def publish_frontiers(self):
         """Publikuje wykryte frontiere i klastry"""
@@ -557,7 +557,7 @@ class WFDExplorerNode(Node):
         
         if self.debug_logging:
             self.get_logger().info(
-                f"🔍 Opublikowano {len(points)} frontierów w {len(cluster_centroids)} klastrach "
+                f"Opublikowano {len(points)} frontierów w {len(cluster_centroids)} klastrach "
                 f"(CPU: {data['cpu_time']:.3f}s)"
             )
     

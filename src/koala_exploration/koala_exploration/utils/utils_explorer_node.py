@@ -69,7 +69,7 @@ class ExplorerUtils:
             self.node.ENABLE_BENCHMARK = self.node.get_parameter('ENABLE_BENCHMARK').get_parameter_value().bool_value
             
         except Exception as e:
-            self.node.get_logger().error(f"❌ Błąd podczas aktualizacji parametrów: {e}")
+            self.node.get_logger().error(f"Błąd podczas aktualizacji parametrów: {e}")
             return
 
     def visualize_frontiers(self, frontiers: List[Tuple[int,int]], clusters: List[List[Tuple[int,int]]], 
@@ -332,8 +332,6 @@ class ExplorerUtils:
                 'ADAPTIVE_INFO_GAIN': self.node.ADAPTIVE_INFO_GAIN, # type: ignore
             }
             
-            # Parametry nawigacji (używaj już zebranych z exploration_stats)
-            # exploration_stats['navigation_parameters'] już zawiera parametry zebrane podczas startu
 
             # Przygotuj dane do zapisu
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -344,27 +342,27 @@ class ExplorerUtils:
             with open(filepath, 'w') as f:
                 json.dump(exploration_stats, f, indent=2)
             
-            self.node.get_logger().info(f"📊 Podsumowanie eksploracji zapisane do: {filepath}")
+            self.node.get_logger().info(f"Podsumowanie eksploracji zapisane do: {filepath}")
             
             # Wyświetl podsumowanie w logach
             self.log_exploration_summary(exploration_stats)
             
         except Exception as e:
-            self.node.get_logger().error(f"❌ Błąd podczas zapisywania podsumowania: {e}")
+            self.node.get_logger().error(f"Błąd podczas zapisywania podsumowania: {e}")
 
     def log_exploration_summary(self, stats: dict) -> None:
         """Wyświetla podsumowanie eksploracji w logach"""
-        self.node.get_logger().info("📊 ===== PODSUMOWANIE EKSPLORACJI =====")
-        self.node.get_logger().info(f"⏱️  Całkowity czas: {stats.get('total_time_formatted', 'N/A')}")
-        self.node.get_logger().info(f"📏 Pokonal odległość: {stats['total_distance']:.2f} m")
-        self.node.get_logger().info(f"🎯 Odwiedzone frontiere: {stats['frontiers_visited']}")
-        self.node.get_logger().info(f"🚀 Próby nawigacji: {stats['navigation_attempts']}")
-        self.node.get_logger().info(f"✅ Udane nawigacje: {stats['successful_navigations']}")
-        self.node.get_logger().info(f"❌ Nieudane nawigacje: {stats['failed_navigations']}")
-        self.node.get_logger().info(f"📈 Wskaźnik sukcesu: {stats.get('success_rate', 0):.1f}%")
-        self.node.get_logger().info(f"🏃 Średnia prędkość: {stats.get('average_speed_ms', 0):.2f} m/s")
-        self.node.get_logger().info(f"🗺️  Punkty trasy: {len(stats['path_points'])}")
-        self.node.get_logger().info("📊 ====================================")
+        self.node.get_logger().info("===== PODSUMOWANIE EKSPLORACJI =====")
+        self.node.get_logger().info(f" Całkowity czas: {stats.get('total_time_formatted', 'N/A')}")
+        self.node.get_logger().info(f" Pokonal odległość: {stats['total_distance']:.2f} m")
+        self.node.get_logger().info(f" Odwiedzone frontiere: {stats['frontiers_visited']}")
+        self.node.get_logger().info(f" Próby nawigacji: {stats['navigation_attempts']}")
+        self.node.get_logger().info(f" Udane nawigacje: {stats['successful_navigations']}")
+        self.node.get_logger().info(f" Nieudane nawigacje: {stats['failed_navigations']}")
+        self.node.get_logger().info(f" Wskaźnik sukcesu: {stats.get('success_rate', 0):.1f}%")
+        self.node.get_logger().info(f" Średnia prędkość: {stats.get('average_speed_ms', 0):.2f} m/s")
+        self.node.get_logger().info(f"  Punkty trasy: {len(stats['path_points'])}")
+        self.node.get_logger().info(" ====================================")
 
     def extract_parameter_value(self, param) -> Any:
         """Wyciąga wartość z Parameter message z obsługą wszystkich typów"""
@@ -407,7 +405,6 @@ class ExplorerUtils:
             service_name = f'/{node_name}/get_parameters'
             client = self.node.create_client(GetParameters, service_name)
             
-            # ✅ ZWIĘKSZONY timeout - niektóre węzły mogą potrzebować więcej czasu
             if client.wait_for_service(timeout_sec=2.0):
                 request = GetParameters.Request()
                 request.names = param_names
@@ -425,26 +422,23 @@ class ExplorerUtils:
                                 if param_value is not None:
                                     nav_params[f"{node_name}.{param_names[i]}"] = param_value
                                 else:
-                                    # ✅ DODAJ wartość NULL zamiast pomijania
                                     nav_params[f"{node_name}.{param_names[i]}"] = "NOT_SET"
                                     
-                        self.node.get_logger().info(f"✅ Odczytano {len(param_names)} parametrów z {node_name}")
+                        self.node.get_logger().info(f"Odczytano {len(param_names)} parametrów z {node_name}")
                     else:
-                        self.node.get_logger().warning(f"⚠️  Brak odpowiedzi z {node_name}")
+                        self.node.get_logger().warning(f"Brak odpowiedzi z {node_name}")
                         
                 except Exception as e:
                     self.node.get_logger().warning(f"Błąd odczytywania z {node_name}: {e}")
             else:
                 self.node.get_logger().warning(f"Service {service_name} niedostępny")
-                # ✅ DODAJ placeholder dla niedostępnych węzłów
                 for param_name in param_names:
                     nav_params[f"{node_name}.{param_name}"] = "SERVICE_UNAVAILABLE"
 
-        # ✅ DODAJ podsumowanie
         total_params = len(nav_params)
         available_nodes = len([k for k in nav_params.keys() if not nav_params[k] in ["SERVICE_UNAVAILABLE", "NOT_SET"]])
 
-        self.node.get_logger().info(f"📊 Nav2 Parameters: {total_params} parametrów, {available_nodes} dostępnych")
+        self.node.get_logger().info(f"Nav2 Parameters: {total_params} parametrów, {available_nodes} dostępnych")
 
         return nav_params
 
@@ -515,7 +509,7 @@ class ExplorerUtils:
             plt.savefig(filepath, dpi=300, bbox_inches='tight')
             plt.close()
             
-            self.node.get_logger().info(f"🗺️  Wizualizacja trasy zapisana do: {filepath}")
+            self.node.get_logger().info(f"Wizualizacja trasy zapisana do: {filepath}")
             
         except Exception as e:
-            self.node.get_logger().error(f"❌ Błąd podczas zapisywania wizualizacji: {e}")            
+            self.node.get_logger().error(f"Błąd podczas zapisywania wizualizacji: {e}")            

@@ -112,7 +112,7 @@ class ParallelFrontierBenchmark:
                     self.ffd_memory_usage.append(msg.memory_usage)
             
         except Exception as e:
-            self.parent_node.get_logger().error(f"❌ Błąd w FFD benchmark callback: {e}")
+            self.parent_node.get_logger().error(f"Błąd w FFD benchmark callback: {e}")
     
     def _wfd_callback(self, msg: Frontiers):
         """Callback dla wiadomości z WFD"""
@@ -149,10 +149,10 @@ class ParallelFrontierBenchmark:
                     self.wfd_memory_usage.append(msg.memory_usage)
             
         except Exception as e:
-            self.parent_node.get_logger().error(f"❌ Błąd w WFD benchmark callback: {e}")
+            self.parent_node.get_logger().error(f"Błąd w WFD benchmark callback: {e}")
     
     def start_benchmark(self):
-        self.parent_node.get_logger().info("🏁 Benchmark równoległy FFD vs WFD rozpoczęty")
+        self.parent_node.get_logger().info("Benchmark równoległy FFD vs WFD rozpoczęty")
     
     def add_map_for_benchmark(self, occupancy_grid: OccupancyGrid):
         """Dodaje mapę do benchmarku"""
@@ -211,7 +211,7 @@ class ParallelFrontierBenchmark:
     
     def stop_benchmark(self):
         """Zatrzymuje benchmark"""
-        self.parent_node.get_logger().info("🏁 Benchmark równoległy FFD vs WFD zatrzymany")
+        self.parent_node.get_logger().info("Benchmark równoległy FFD vs WFD zatrzymany")
 
 class BenchmarkAnalyzer:
     """Analiza i wizualizacja wyników benchmarku"""
